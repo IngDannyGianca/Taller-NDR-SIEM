@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>De la Alerta a la Acción – Taller Sin SOAR</title>
+  <style>
+    :root { --blue:#1a237e; --green:#2e7d32; --red:#c62828; --grey:#607d8b; --yellow:#f9a825; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background:#f3f6fc; margin:0; color:#333; }
+    header { background: var(--blue); color:#fff; text-align:center; padding:1.6rem 1rem; }
+    main { max-width: 950px; margin:2rem auto; background:#fff; border-radius:14px; padding:2rem 2.5rem; box-shadow:0 6px 16px rgba(0,0,0,.08); }
+    h2 { color: var(--blue); margin:1.2rem 0 .6rem; }
+    .role-box { display:flex; flex-wrap:wrap; gap:1rem; margin-bottom:1.4rem; }
+    .role { flex:1 1 200px; background:#fafafa; border:1px solid #dadada; border-radius:10px; padding:1rem; text-align:center; }
+    .role.active { border-color: var(--blue); box-shadow:0 0 0 3px rgba(26,35,126,.2); }
+    button { padding:.7rem 1.3rem; border:none; border-radius:6px; cursor:pointer; font-size:1rem; background:var(--blue); color:#fff; transition:background .2s; }
+    button:hover { background:#283593; }
+    .disabled { opacity:.5; cursor:not-allowed; }
+    .explain { margin-top:.6rem; background:#e8f0fe; border-left:4px solid var(--blue); padding:.8rem; border-radius:6px; }
+    .timer { font-size:1.6rem; font-weight:bold; margin:1rem 0; text-align:center; }
+    .result { font-size:1.2rem; font-weight:bold; text-align:center; margin-top:1rem; }
+    .ok { color: var(--green); }
+    .bad { color: var(--red); }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Camino de la Alerta a la Acción (Sin SOAR)</h1>
+  <p>Simularemos cómo un equipo de seguridad responde a una alerta, sin automatización. Cada paso explica <strong>por qué</strong> es importante.</p>
+</header>
+<main>
+  <h2>Roles en la historia</h2>
+  <div class="role-box" id="roles">
+    <div class="role" data-step="0"><strong>Alarma</strong><br><small>Dispara la alerta inicial</small></div>
+    <div class="role" data-step="1"><strong>Analista 1</strong><br><small>Clasifica la alerta</small></div>
+    <div class="role" data-step="2"><strong>Analista 2</strong><br><small>Crea ticket</small></div>
+    <div class="role" data-step="3"><strong>Infra</strong><br><small>Bloquea la amenaza</small></div>
+  </div>
+
+  <div class="timer" id="timer">Tiempo transcurrido: 0 min</div>
+  <button id="startBtn">Iniciar flujo</button>
+  <div class="explain" id="explainBox"></div>
+  <div class="result" id="finalMsg"></div>
+</main>
+
+<script>
+const roles=document.querySelectorAll('.role');
+const timerEl=document.getElementById('timer');
+const explainBox=document.getElementById('explainBox');
+const finalMsg=document.getElementById('finalMsg');
+const startBtn=document.getElementById('startBtn');
+
+const steps=[
+  {name:'Alarma',   why:'Una alerta automática es como un detector de humo: avisa que algo puede estar mal antes de que sea tarde.'},
+  {name:'Analista 1',why:'La primera revisión separa incendios reales de falsas alarmas; evita perder tiempo y recursos.'},
+  {name:'Analista 2',why:'Registrar el incidente en ServiceNow asegura que todos sepan qué hacer y quede evidencia para auditoría.'},
+  {name:'Infra',     why:'Aplicar un bloqueo (ACL) corta el acceso del atacante, como cerrar la puerta principal en pleno incendio.'}
+];
+
+let current=-1,totalTime=0; // en minutos
+
+function nextStep(){
+  // desactivar rol anterior
+  if(current>=0)roles[current].classList.remove('active');
+
+  current++;
+  if(current<steps.length){
+    roles[current].classList.add('active');
+    // sumar tiempo aleatorio 5-15 min por paso (simulación)
+    const add=Math.floor(Math.random()*11)+5; totalTime+=add;
+    timerEl.textContent=`Tiempo transcurrido: ${totalTime} min`;
+    explainBox.textContent=`Paso ${current+1} – ${steps[current].name}: ${steps[current].why}\n(Se estiman ${add} min)`;
+    // transformar botón
+    startBtn.textContent=current===steps.length-1?'Finalizar':'Siguiente paso';
+  }else{
+    // flujo completo
+    for(const r of roles)r.classList.remove('active');
+    explainBox.textContent='Flujo completo.';
+    startBtn.classList.add('disabled');startBtn.disabled=true;
+    if(totalTime<=45){finalMsg.textContent=`✅ ¡Buen trabajo! Terminamos en ${totalTime} min (< 45 min).`;finalMsg.className='result ok';}
+    else{finalMsg.textContent=`⚠️ Terminamos en ${totalTime} min (> 45 min). Hay que agilizar procesos.`;finalMsg.className='result bad';}
+  }
+}
+
+startBtn.onclick=function(){ if(startBtn.disabled)return; nextStep(); };
+</script>
+</body>
+</html>

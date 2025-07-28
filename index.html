@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NDR + SIEM – Índice de Actividades</title>
+  <style>
+    :root{--blue:#0d47a1;--light:#e8f0fe;--grey:#455a64;--shadow:rgba(0,0,0,.08)}
+    body{font-family:'Segoe UI',Tahoma,sans-serif;margin:0;background:#f4f7fb;color:#333}
+    header{background:var(--blue);color:#fff;text-align:center;padding:1.6rem 1rem}
+    main{max-width:1000px;margin:2rem auto;background:#fff;border-radius:14px;padding:2.2rem 2.8rem;box-shadow:0 6px 16px var(--shadow)}
+    h2{color:var(--blue);margin-top:0}
+    p.lead{font-size:1.05rem;margin-top:.4rem}
+    .cards{display:flex;flex-wrap:wrap;gap:1.2rem;margin-top:1.4rem}
+    .card{flex:1 1 220px;background:#fafafa;border:1px solid #dadce0;border-radius:10px;box-shadow:0 2px 6px var(--shadow);padding:1.2rem;transition:transform .2s}
+    .card:hover{transform:translateY(-4px)}
+    .card a{text-decoration:none;color:var(--blue);font-weight:bold;font-size:1.05rem}
+    .card p{font-size:.9rem;margin:.6rem 0 0}
+    footer{text-align:center;font-size:.85rem;color:var(--grey);margin:2rem 0}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Taller Interactivo – Cómo auditar NDR + SIEM</h1>
+  <p>Fases: detección, correlación, priorización y respuesta.</p>
+</header>
+<main>
+  <h2>Índice de actividades</h2>
+  <p class="lead">Sigue el orden sugerido o abre la que necesites para tu exposición.</p>
+  <div class="cards">
+    <div class="card">
+      <a href="4.1 Verificar cámaras (ExtraHop – NDR).html" target="_blank">4.1 Verificar cámaras (NDR)</a>
+      <p>Simula tráfico sospechoso, envíalo al NDR y responde preguntas con feedback instantáneo.</p>
+    </div>
+    <div class="card">
+      <a href="4.2 Verificar central de policía (ArcSight – SIEM).html" target="_blank">4.2 Verificar central (SIEM)</a>
+      <p>Juegos de mesa: detecta fuentes sin eventos, retrasos y revisa conectores.</p>
+    </div>
+    <div class="card">
+      <a href="4.3 Detectamos truco o lo dejamos pasar.html" target="_blank">4.3 ¿Truco o no?</a>
+      <p>Mini‑juego para elegir las amenazas realmente críticas y evitar falsos positivos.</p>
+    </div>
+    <div class="card">
+      <a href="4.4 Camino de la alerta a la acción (sin SOAR).html" target="_blank">4.4 Camino de la alerta (sin SOAR)</a>
+      <p>Flujo de roles en vivo: del detector de humo (alerta) a apagar el fuego (bloqueo).</p>
+    </div>
+  </div>
+
+  <h2 style="margin-top:2rem">Objetivo general de la exposición</h2>
+  <p>Demostrar, de forma sencilla y práctica, cómo un banco puede:</p>
+  <ul>
+    <li>Garantizar visibilidad total del tráfico crítico mediante <strong>ExtraHop (NDR)</strong>.</li>
+    <li>Correlacionar y priorizar eventos con <strong>ArcSight (SIEM)</strong> para reducir ruido.</li>
+    <li>Enseñar al equipo a distinguir amenazas reales de falsos positivos.</li>
+    <li>Responder en menos de <em>45 min</em> incluso sin herramientas SOAR.</li>
+  </ul>
+  <p>Cada actividad refleja un paso del flujo “Detectar → Analizar → Priorizar → Contener”.</p>
+</main>
+<footer>
+  © 2025 – Taller NDR + SIEM. Creado por: Giancarlo Saldaña.
+</footer>
+</body>
+</html>

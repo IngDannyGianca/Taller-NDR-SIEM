@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NDR + SIEM explicado paso a paso</title>
+  <style>
+    :root { --blue:#1e88e5; --green:#43a047; --grey:#90a4ae; --red:#e53935; }
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;margin:0;padding:0;background:#f4f7fb;color:#333}
+    header{background:var(--blue);color:#fff;padding:1rem 2rem;text-align:center}
+    main{max-width:1000px;margin:2rem auto;background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);padding:2rem 3rem}
+    h2{color:var(--blue);margin-top:1.5rem}
+    .step{display:flex;align-items:center;gap:1rem;margin-top:1rem}
+    .circle{width:36px;height:36px;border-radius:50%;background:var(--grey);color:#fff;display:flex;align-items:center;justify-content:center}
+    .circle.active{background:var(--blue)}
+    button{padding:.6rem 1.2rem;border:none;border-radius:6px;cursor:pointer;font-size:1rem;margin-top:1rem;transition:background .2s}
+    button.run{background:var(--blue);color:#fff}
+    button.next{background:var(--green);color:#fff}
+    .log{background:#eef3f9;padding:1rem;border-radius:8px;margin-top:1rem;height:120px;overflow:auto;font-family:monospace}
+    .log p{margin:.2rem 0}
+    .quiz-box{margin-top:1.5rem}
+    .feedback{font-weight:bold;margin-top:.4rem}
+  </style>
+</head>
+<body>
+<header>
+  <h1>¿Cómo trabajan juntos NDR y SIEM?</h1>
+  <p>Interactúa con los botones para ver cada fase y responde cada pregunta; obtendrás retroalimentación inmediata.</p>
+</header>
+<main>
+  <h2>Paso 1 – Captura en NDR</h2>
+  <div class="step"><div id="c1" class="circle">1</div><span>ExtraHop (NDR) observa el tráfico en tiempo real.</span></div>
+  <button id="trafficBtn" class="run">Generar tráfico sospechoso</button>
+  <div class="log" id="log"></div>
+
+  <h2>Paso 2 – Correlación en SIEM</h2>
+  <div class="step"><div id="c2" class="circle">2</div><span>ArcSight (SIEM) recibe eventos y los correlaciona.</span></div>
+  <button id="sendBtn" class="next" disabled>Enviar evento al SIEM</button>
+
+  <h2>Paso 3 – Respuesta del analista</h2>
+  <div class="step"><div id="c3" class="circle">3</div><span>El SOC decide si es amenaza real o falso positivo.</span></div>
+  <button id="analystBtn" class="next" disabled>Tomar acción</button>
+
+  <!-- Quiz ampliado con feedback inmediato -->
+  <div class="quiz-box">
+    <h2>Mini‑Quiz</h2>
+    <p><strong>1. ¿Quién detecta primero el patrón sospechoso?</strong></p>
+    <label><input type="radio" name="q1" value="ndr"> NDR</label><br>
+    <label><input type="radio" name="q1" value="siem"> SIEM</label><br>
+    <label><input type="radio" name="q1" value="analista"> Analista humano</label>
+    <p id="fb-q1" class="feedback"></p>
+
+    <p style="margin-top:1rem"><strong>2. ¿Quién correlaciona eventos de múltiples fuentes para reducir ruido?</strong></p>
+    <label><input type="radio" name="q2" value="ndr"> NDR</label><br>
+    <label><input type="radio" name="q2" value="siem"> SIEM</label><br>
+    <label><input type="radio" name="q2" value="fw"> Firewall</label>
+    <p id="fb-q2" class="feedback"></p>
+
+    <p style="margin-top:1rem"><strong>3. ¿Qué métrica mide el tiempo desde la alerta hasta la contención?</strong></p>
+    <label><input type="radio" name="q3" value="mttd"> MTTD</label><br>
+    <label><input type="radio" name="q3" value="mttr"> MTTR</label><br>
+    <label><input type="radio" name="q3" value="cvss"> CVSS</label>
+    <p id="fb-q3" class="feedback"></p>
+  </div>
+</main>
+<script>
+// ---- Simulación fases -----
+const log=document.getElementById('log');
+const trafficBtn=document.getElementById('trafficBtn');
+const sendBtn=document.getElementById('sendBtn');
+const analystBtn=document.getElementById('analystBtn');
+const circles=[document.getElementById('c1'),document.getElementById('c2'),document.getElementById('c3')];
+function addLog(msg,color=''){const p=document.createElement('p');p.textContent=msg;if(color)p.style.color=color;log.appendChild(p);log.scrollTop=log.scrollHeight;}
+trafficBtn.onclick=()=>{circles[0].classList.add('active');addLog('NDR → Detectó patrón SMB Exec malicioso','darkred');sendBtn.disabled=false;};
+sendBtn.onclick=()=>{circles[1].classList.add('active');addLog('SIEM → Correlacionó con lista IPs sospechosas','purple');analystBtn.disabled=false;};
+analystBtn.onclick=()=>{circles[2].classList.add('active');const fp=Math.random()<0.3;fp?addLog('Analista → FALSO positivo (backup programado)','green'):addLog('Analista → VERDADERO positivo, bloquea IP','red');};
+// ---- Feedback inmediato Quiz ----
+const answers={q1:'ndr',q2:'siem',q3:'mttr'};
+const explanations={
+  q1:{ndr:'Correcto: el NDR inspecciona en tiempo real.',other:'Incorrecto: quien ve primero el tráfico es el NDR.'},
+  q2:{siem:'Correcto: el SIEM cruza eventos de muchas fuentes.',other:'Incorrecto: la correlación global la hace el SIEM.'},
+  q3:{mttr:'Correcto: MTTR = tiempo hasta contención.',other:'Incorrecto: MTTR es la métrica adecuada.'}
+};
+function attach(group){document.querySelectorAll(`input[name="${group}"]`).forEach(r=>r.addEventListener('change',e=>{
+  const fb=document.getElementById(`fb-${group}`);
+  if(e.target.value===answers[group]){fb.textContent=`✅ ${explanations[group][answers[group]]}`;fb.style.color='green';}
+  else{fb.textContent=`❌ ${explanations[group].other}`;fb.style.color='red';}
+}));}
+['q1','q2','q3'].forEach(attach);
+</script>
+</body>
+</html>

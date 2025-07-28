@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArcSight y ExtraHop – Taller para Todos</title>
+  <style>
+    :root { --blue:#0d47a1; --green:#2e7d32; --red:#c62828; --yellow:#ffb300; --grey:#90a4ae; }
+    body { font-family: Arial, Helvetica, sans-serif; margin: 0; background: #f3f6fc; color: #333; }
+    header { background: var(--blue); color: #fff; text-align: center; padding: 1.6rem 1rem; }
+    main { max-width: 1000px; margin: 2rem auto; background: #fff; border-radius: 14px; box-shadow: 0 6px 16px rgba(0,0,0,.08); padding: 2rem 2.5rem; }
+    h2 { color: var(--blue); margin: 1.4rem 0 .8rem; }
+    p.note { background: #e8f0fe; border-left: 4px solid var(--blue); padding: .7rem .9rem; border-radius: 6px; }
+    button { padding: .55rem 1.1rem; border: none; border-radius: 6px; background: var(--blue); color: #fff; font-size: 1rem; cursor: pointer; margin-top: .6rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: .7rem; }
+    th, td { border: 1px solid #c5c5c5; padding: .5rem; text-align: center; }
+    tr.zero { background: #ffebee; }       /* 0 eventos */
+    tr.delay { background: #fff8e1; }      /* delay alto */
+    tr.fail  { animation: shake .2s linear 2; }
+    @keyframes shake { 0%{transform:translateX(0)}25%{transform:translateX(-3px)}50%{transform:translateX(3px)}75%{transform:translateX(-3px)}100%{transform:translateX(0)} }
+    .card { background: #fafafa; border: 1px solid #dadada; border-radius: 8px; padding: 1rem; flex: 1 1 220px; text-align: center; margin: .6rem 0; }
+    .board { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .emoji { font-size: 1.9rem; }
+    .logbox { background: #e3f2fd; border-left: 4px solid var(--blue); padding: .8rem; border-radius: 6px; margin-top: .6rem; font-family: monospace; height: 120px; overflow: auto; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Entendiendo la Seguridad de nuestra Red</h1>
+  <p>Usaremos ejemplos sencillos: piensa en <strong>ExtraHop</strong> como las cámaras&nbsp;CCTV de un centro comercial y en <strong>ArcSight</strong> como el cuarto de seguridad que analiza lo que ve cada cámara.</p>
+</header>
+<main>
+  <!-- RETO 1 -->
+  <section>
+    <h2>Reto 1 – Cámaras que no ven nada (Fuentes con 0 eventos)</h2>
+    <p class="note">¿Por qué importa? Si una cámara no envía imágenes, hay un pasillo sin vigilancia. Igual: si un servidor no genera registros (eventos), nuestros analistas están ciegos en esa zona.</p>
+    <button id="genSrc">Crear tabla de ejemplo</button>
+    <p>Clic en las filas que creas que tienen <strong>0 eventos</strong>. Se pondrán en rojo si aciertas.</p>
+    <div id="srcTable"></div>
+  </section>
+
+  <!-- RETO 2 -->
+  <section>
+    <h2>Reto 2 – Retrasos en la señal (> 300 segundos)</h2>
+    <p class="note">¿Por qué importa? Si la cámara envía la grabación 5 min después, el ladrón ya huyó. Lo mismo pasa si los registros tardan en llegar.</p>
+    <button id="genDelay">Crear tabla de ejemplo</button>
+    <p>Marca las filas con retraso mayor a 300 segundos. Verás un fondo amarillo si aciertas.</p>
+    <div id="delayTable"></div>
+  </section>
+
+  <!-- RETO 3 -->
+  <section>
+    <h2>Reto 3 – Estado de los conectores (cámaras conectadas)</h2>
+    <p class="note">¿Por qué importa? Los <em>SmartConnectors</em> son como los cables que unen cámaras y sala de vigilancia. Si están caídos, tampoco llega la señal.</p>
+    <div class="board" id="scBoard"></div>
+    <button id="refreshSC">Actualizar estados</button>
+  </section>
+
+  <!-- RETO 4 -->
+  <section>
+    <h2>Reto 4 – Detectar actividad peligrosa (MITRE T1210: RDP expuesto)</h2>
+    <p class="note">¿Por qué importa? El protocolo RDP abierto a internet es como dejar la puerta de servicio sin candado. Debe saltar una alarma.</p>
+    <button id="injectLog">Simular intento RDP</button>
+    <div class="logbox" id="mitreLog"></div>
+  </section>
+</main>
+
+<script>
+/************************* Helper *************************/
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+
+/********************* Reto 1 *****************************/
+const srcBtn=document.getElementById('genSrc');const srcDiv=document.getElementById('srcTable');
+srcBtn.onclick=()=>{
+  const rows=[...Array(10)].map((_,i)=>({host:`Cámara-${i+1}`,ev:rand(0,25)}));
+  let html='<table><tr><th>Fuente</th><th>Eventos (24h)</th></tr>';
+  rows.forEach((r,i)=>{html+=`<tr data-i="${i}"><td>${r.host}</td><td>${r.ev}</td></tr>`});html+='</table>';srcDiv.innerHTML=html;
+  srcDiv.querySelectorAll('tr[data-i]').forEach(tr=>tr.onclick=()=>{
+    const ev=rows[tr.dataset.i].ev;
+    if(ev===0){tr.classList.toggle('zero');}
+    else{tr.classList.add('fail');setTimeout(()=>tr.classList.remove('fail'),500);}  });
+};
+
+/********************* Reto 2 *****************************/
+const delayBtn=document.getElementById('genDelay');const delayDiv=document.getElementById('delayTable');
+delayBtn.onclick=()=>{
+  const rows=[...Array(10)].map((_,i)=>({host:`Servidor-${i+1}`,delay:rand(30,600)}));
+  let html='<table><tr><th>Host</th><th>Retraso (seg)</th></tr>';
+  rows.forEach((r,i)=>{html+=`<tr data-i="${i}"><td>${r.host}</td><td>${r.delay}</td></tr>`});html+='</table>';delayDiv.innerHTML=html;
+  delayDiv.querySelectorAll('tr[data-i]').forEach(tr=>tr.onclick=()=>{
+    const d=rows[tr.dataset.i].delay;
+    if(d>300){tr.classList.toggle('delay');}
+    else{tr.classList.add('fail');setTimeout(()=>tr.classList.remove('fail'),500);}  });
+};
+
+/********************* Reto 3 *****************************/
+const scNames=['syslog','db','firewall','o365','cloudTrail'];const scBoard=document.getElementById('scBoard');const paint=()=>{scBoard.innerHTML='';scNames.forEach(n=>{const ok=Math.random()>0.25;const card=document.createElement('div');card.className='card';card.innerHTML=`<span class="emoji">${ok?'🙂':'😡'}</span><br>${n}`;scBoard.appendChild(card);});};paint();document.getElementById('refreshSC').onclick=paint;
+
+/********************* Reto 4 *****************************/
+const mitreBtn=document.getElementById('injectLog');const mitreBox=document.getElementById('mitreLog');mitreBtn.onclick=()=>{
+  const detected=Math.random()>0.3;const now=new Date().toLocaleTimeString();mitreBox.innerHTML+=`${now} → ${detected?'[ALERTA]':'[INFO ]'} Intento RDP desautorizado\n`;mitreBox.scrollTop=mitreBox.scrollHeight;};
+</script>
+</body>
+</html>
