@@ -18,6 +18,17 @@
     .card p{font-size:.9rem;margin:.6rem 0 0}
     footer{text-align:center;font-size:.85rem;color:var(--grey);margin:2rem 0}
   </style>
+  <script>
+  const f = document.getElementById('footerNav');
+  f.style.cursor = 'pointer';
+  f.setAttribute('role','link');
+  f.tabIndex = 0;                    // accesible con teclado
+  const go = () => location.href = 'flappybac.php';
+  f.addEventListener('click', go);
+  f.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+  });
+</script>
 </head>
 <body>
 <header>
@@ -56,7 +67,7 @@
   </ul>
   <p>Cada actividad refleja un paso del flujo “Detectar → Analizar → Priorizar → Contener”.</p>
 </main>
-<footer>
+<footer id="footerNav">
   © 2025 – Taller NDR + SIEM. Creado por: Giancarlo Saldaña.
 </footer>
 </body>
