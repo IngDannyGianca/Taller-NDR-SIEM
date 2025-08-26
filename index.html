@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NDR + SIEM – Índice de Actividades</title>
   <style>
     :root{--blue:#0d47a1;--light:#e8f0fe;--grey:#455a64;--shadow:rgba(0,0,0,.08)}
@@ -16,44 +16,74 @@
     .card:hover{transform:translateY(-4px)}
     .card a{text-decoration:none;color:var(--blue);font-weight:bold;font-size:1.05rem}
     .card p{font-size:.9rem;margin:.6rem 0 0}
-    footer{text-align:center;font-size:.85rem;color:var(--grey);margin:2rem 0}
 
-}
+    /* Botón para el “Extra” */
+    .btn{
+      display:inline-block;
+      padding:.6rem 1rem;
+      border-radius:8px;
+      background:var(--blue);
+      color:#fff !important;
+      box-shadow:0 2px 6px var(--shadow);
+    }
+    .btn:hover{filter:brightness(1.05)}
 
+    /* Footer clickeable completo */
+    footer{
+      text-align:center;
+      font-size:.85rem;
+      color:var(--grey);
+      margin:2rem 0;
+      background:#f7f9ff;
+    }
+    .footer-link{
+      display:block;
+      padding:12px 10px;
+      color:inherit;
+      text-decoration:none;
+      cursor:pointer;
+    }
+    .footer-link:focus-visible{
+      outline:2px dashed var(--blue);
+      outline-offset:4px;
+    }
   </style>
-
 </head>
 <body>
 <header>
   <h1>Taller Interactivo – Cómo auditar NDR + SIEM</h1>
   <p>Fases: detección, correlación, priorización y respuesta.</p>
 </header>
+
 <main>
   <h2>Índice de actividades</h2>
   <p class="lead">Sigue el orden sugerido o abre la que necesites para tu exposición.</p>
+
   <div class="cards">
     <div class="card">
-      <a href="4.1 Verificar cámaras (ExtraHop – NDR).html" target="_blank">4.1 Verificar cámaras (NDR)</a>
+      <a href="4.1 Verificar cámaras (ExtraHop – NDR).html" target="_blank" rel="noopener">4.1 Verificar cámaras (NDR)</a>
       <p>Simula tráfico sospechoso, envíalo al NDR y responde preguntas con feedback instantáneo.</p>
     </div>
+
     <div class="card">
-      <a href="4.2 Verificar central de policía (ArcSight – SIEM).html" target="_blank">4.2 Verificar central (SIEM)</a>
+      <a href="4.2 Verificar central de policía (ArcSight – SIEM).html" target="_blank" rel="noopener">4.2 Verificar central (SIEM)</a>
       <p>Juegos de mesa: detecta fuentes sin eventos, retrasos y revisa conectores.</p>
     </div>
+
     <div class="card">
-      <a href="4.3 Detectamos truco o lo dejamos pasar.html" target="_blank">4.3 ¿Truco o no?</a>
-      <p>Mini‑juego para elegir las amenazas realmente críticas y evitar falsos positivos.</p>
+      <a href="4.3 Detectamos truco o lo dejamos pasar.html" target="_blank" rel="noopener">4.3 ¿Truco o no?</a>
+      <p>Mini-juego para elegir las amenazas realmente críticas y evitar falsos positivos.</p>
     </div>
+
     <div class="card">
-      <a href="4.4 Camino de la alerta a la acción (sin SOAR).html" target="_blank">4.4 Camino de la alerta (sin SOAR)</a>
+      <a href="4.4 Camino de la alerta a la acción (sin SOAR).html" target="_blank" rel="noopener">4.4 Camino de la alerta (sin SOAR)</a>
       <p>Flujo de roles en vivo: del detector de humo (alerta) a apagar el fuego (bloqueo).</p>
     </div>
 
-
-
+    <!-- Extra: Flappy BAC -->
     <div class="card">
-      <a href="flappybac.php" target="_blank">Extra</a>
-      <p>Extra.</p>
+      <a href="./flappybac.php" target="_blank" rel="noopener" class="btn">Jugar Flappy BAC</a>
+      <p>Mini-juego extra de estilo retro.</p>
     </div>
   </div>
 
@@ -63,12 +93,13 @@
     <li>Garantizar visibilidad total del tráfico crítico mediante <strong>ExtraHop (NDR)</strong>.</li>
     <li>Correlacionar y priorizar eventos con <strong>ArcSight (SIEM)</strong> para reducir ruido.</li>
     <li>Enseñar al equipo a distinguir amenazas reales de falsos positivos.</li>
-    <li>Responder en menos de <em>45 min</em> incluso sin herramientas SOAR.</li>
+    <li>Responder en menos de <em>45 min</em> incluso sin herramientas SOAR.</li>
   </ul>
-  <p>Cada actividad refleja un paso del flujo “Detectar → Analizar → Priorizar → Contener”.</p>
+  <p>Cada actividad refleja un paso del flujo “Detectar → Analizar → Priorizar → Contener”.</p>
 </main>
+
 <footer>
-  <a class="footer-link" href="flappybac.php">
+  <a class="footer-link" href="./flappybac.php" target="_self">
     © 2025 – Taller NDR + SIEM. Creado por: Giancarlo Saldaña.
   </a>
 </footer>
